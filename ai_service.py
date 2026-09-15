@@ -61,3 +61,22 @@ async def generate_section(mavzu: str, bolim_nomi: str, chars_target: int, is_ki
     return response.choices[0].message.content.strip()
 
 
+async def generate_full_document(mavzu: str, reja_soni: int, chars_per_section: int) -> dict:
+    """
+    Butun hujjatni generatsiya qiladi: reja, kirish, har bir bo'lim, xulosa.
+    Bo'limlarni parallel generatsiya qilib vaqtni tejaydi.
+    """
+    reja = await generate_reja(mavzu, reja_soni)
+
+    tasks = [generate_section(mavzu, "", chars_per_section, is_kirish=True)]
+    for bolim in reja:
+        tasks.append(generate_section(mavzu, bolim, chars_per_section))
+    tasks.append(generate_section(mavzu, "", chars_per_section, is_xulosa=True))
+
+    results = await asyncio.gather(*tasks)
+
+    return {
+        "kirish": results[0],
+        "bolimlar": list(zip(reja, results[1:-1])),
+        "xulosa": results[-1],
+    }
