@@ -61,3 +61,43 @@ def build_document(
     add_centered("Toshkent " + "2025")
 
     doc.add_page_break()
+
+    # ---- Reja ----
+    h = doc.add_paragraph()
+    h.add_run("Reja").bold = True
+    h.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    doc.add_paragraph("Kirish")
+    for bolim_nomi, _ in content["bolimlar"]:
+        doc.add_paragraph(bolim_nomi)
+    doc.add_paragraph("Xulosa")
+    doc.add_page_break()
+
+    # ---- Kirish ----
+    h = doc.add_paragraph()
+    h.add_run("Kirish").bold = True
+    for para in content["kirish"].split("\n"):
+        if para.strip():
+            p = doc.add_paragraph(para.strip())
+            p.paragraph_format.first_line_indent = Cm(1.25)
+
+    # ---- Asosiy bo'limlar ----
+    for bolim_nomi, matn in content["bolimlar"]:
+        h = doc.add_paragraph()
+        h.add_run(bolim_nomi).bold = True
+        for para in matn.split("\n"):
+            if para.strip():
+                p = doc.add_paragraph(para.strip())
+                p.paragraph_format.first_line_indent = Cm(1.25)
+
+    # ---- Xulosa ----
+    h = doc.add_paragraph()
+    h.add_run("Xulosa").bold = True
+    for para in content["xulosa"].split("\n"):
+        if para.strip():
+            p = doc.add_paragraph(para.strip())
+            p.paragraph_format.first_line_indent = Cm(1.25)
+
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    filepath = os.path.join(OUTPUT_DIR, f"{file_id}.docx")
+    doc.save(filepath)
+    return filepath
