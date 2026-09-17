@@ -38,3 +38,31 @@ class Order(StatesGroup):
     reja_soni = State()
     varoq_soni = State()
 
+
+# ---------------- Klaviaturalar ----------------
+def main_menu_kb() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="📘 Yangi Mustaqil ish"), KeyboardButton(text="📄 Yangi Referat")],
+        ],
+        resize_keyboard=True,
+    )
+
+
+def reja_soni_kb() -> InlineKeyboardMarkup:
+    buttons = [
+        InlineKeyboardButton(text=str(n), callback_data=f"reja:{n}")
+        for n in REJA_OPTIONS
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=[buttons])
+
+
+def varoq_soni_kb() -> InlineKeyboardMarkup:
+    buttons = [
+        InlineKeyboardButton(text=key, callback_data=f"varoq:{key}")
+        for key in VAROQ_OPTIONS.keys()
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=[buttons])
+
+
+
