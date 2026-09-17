@@ -17,3 +17,24 @@ from aiogram.types import (
     KeyboardButton,
 )
 
+from config import BOT_TOKEN, REJA_OPTIONS, VAROQ_OPTIONS
+from ai_service import generate_full_document
+from doc_generator import build_document
+
+logging.basicConfig(level=logging.INFO)
+
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher(storage=MemoryStorage())
+
+
+# ---------------- FSM holatlari ----------------
+class Order(StatesGroup):
+    turi = State()          # Mustaqil ish / Referat
+    mavzu = State()
+    ism_familiya = State()
+    universitet = State()
+    guruh = State()
+    oqituvchi = State()
+    reja_soni = State()
+    varoq_soni = State()
+
