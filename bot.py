@@ -65,4 +65,23 @@ def varoq_soni_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
 
 
+def bekor_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[InlineKeyboardButton(text="❌ Bekor qilish", callback_data="bekor")]]
+    )
+
+
+# ---------------- Handlerlar ----------------
+@dp.message(CommandStart())
+async def cmd_start(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer(
+        "Assalomu alaykum!\n\n"
+        "Ushbu bot orqali sun'iy intellekt yordamida:\n"
+        "📘 — Mustaqil ishlar\n"
+        "📄 — Referatlar\n\n"
+        "tayyorlashingiz mumkin!\n\nHozircha bot bepul ishlamoqda 🎁",
+        reply_markup=main_menu_kb(),
+    )
+
 
