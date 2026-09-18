@@ -105,3 +105,14 @@ async def get_mavzu(message: Message, state: FSMContext):
         reply_markup=bekor_kb(),
     )
 
+
+@dp.message(Order.ism_familiya)
+async def get_ism(message: Message, state: FSMContext):
+    await state.update_data(ism_familiya=message.text.strip())
+    await state.set_state(Order.universitet)
+    await message.answer(
+        "Universitet nomini kiriting:\n"
+        "Misol: TOSHKENT DAVLAT AXBOROT TEXNOLOGIYALARI UNIVERSITETI",
+        reply_markup=bekor_kb(),
+    )
+
