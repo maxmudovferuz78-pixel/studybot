@@ -85,3 +85,14 @@ async def cmd_start(message: Message, state: FSMContext):
     )
 
 
+@dp.message(F.text.in_(["📘 Yangi Mustaqil ish", "📄 Yangi Referat"]))
+async def new_order(message: Message, state: FSMContext):
+    turi = "Mustaqil ish" if "Mustaqil" in message.text else "Referat"
+    await state.update_data(turi=turi)
+    await state.set_state(Order.mavzu)
+    await message.answer(
+        f"{turi} uchun mavzu nomini to'liq va bexato kiriting:",
+        reply_markup=bekor_kb(),
+    )
+
+
