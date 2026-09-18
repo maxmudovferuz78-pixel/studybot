@@ -116,3 +116,14 @@ async def get_ism(message: Message, state: FSMContext):
         reply_markup=bekor_kb(),
     )
 
+
+@dp.message(Order.universitet)
+async def get_universitet(message: Message, state: FSMContext):
+    await state.update_data(universitet=message.text.strip())
+    await state.set_state(Order.guruh)
+    await message.answer(
+        "Guruh nomini kiriting:\nMisol: 072-24 SAXo'",
+        reply_markup=bekor_kb(),
+    )
+
+
