@@ -96,3 +96,12 @@ async def new_order(message: Message, state: FSMContext):
     )
 
 
+@dp.message(Order.mavzu)
+async def get_mavzu(message: Message, state: FSMContext):
+    await state.update_data(mavzu=message.text.strip())
+    await state.set_state(Order.ism_familiya)
+    await message.answer(
+        "Familiya va ismingizni kiriting.\nMisol: Salimov Bahodir",
+        reply_markup=bekor_kb(),
+    )
+
