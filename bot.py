@@ -207,3 +207,17 @@ async def get_varoq_soni(callback: CallbackQuery, state: FSMContext):
         await state.clear()
 
 
+@dp.callback_query(F.data == "bekor")
+async def cancel(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await callback.message.edit_text("Bekor qilindi.")
+    await callback.message.answer("Asosiy menyu:", reply_markup=main_menu_kb())
+    await callback.answer()
+
+
+async def main():
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
