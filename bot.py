@@ -137,3 +137,13 @@ async def get_guruh(message: Message, state: FSMContext):
     )
 
 
+@dp.message(Order.oqituvchi)
+async def get_oqituvchi(message: Message, state: FSMContext):
+    await state.update_data(oqituvchi=message.text.strip())
+    await state.set_state(Order.reja_soni)
+    await message.answer(
+        "Reja nechta bo'limdan iborat bo'lsin?",
+        reply_markup=reja_soni_kb(),
+    )
+
+
