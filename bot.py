@@ -160,3 +160,50 @@ async def get_reja_soni(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
+@dp.callback_query(F.data.startswith("varoq:"), Order.varoq_soni)
+async def get_varoq_soni(callback: CallbackQuery, state: FSMContext):
+    varoq_key = callback.data.split(":")[1]
+    await state.update_data(varoq_key=varoq_key)
+    await callback.message.edit_text(f"Hajmi: {varoq_key} varoq ✅")
+    await callback.answer()
+
+    data = await state.get_data()
+    await callback.message.answer(
+        "♻️ Hujjat yaratilmoqda...\n⏱ Vaqt: 1-3 daqiqa\nJarayon yakunlangach sizga hujjat yuboriladi."
+    )
+
+    varoq_config = VAROQ_OPTIONS[varoq_key]
+    chars_per_section = varoq_config["chars_per_section"]
+
+    try:
+        content = await generate_full_document(
+            mavzu=data["mavzu"],
+            reja_soni=data["reja_soni"],
+            chars_per_section=chars_per_section,
+        )
+
+        file_id = str(uuid.uuid4())
+        filepath = build_document(
+            turi=data["turi"],
+            mavzu=data["mavzu"],
+            ism_familiya=data["ism_familiya"],
+            universitet=data["universitet"],
+            guruh=data["guruh"],
+            oqituvchi=data["oqituvchi"],
+            content=content,
+            file_id=file_id,
+        )
+
+        await callback.message.answer_document(
+            FSInputFile(filepath, filename=f"{data['mavzu']}.docx"),
+            caption="✅ Jarayon yakunlandi. Sizga hujjat yuborildi.",
+        )
+    except Exception as e:
+        logging.exception("Hujjat generatsiyasida xatolik")
+        await callback.message.answer(
+            "❌ Xatolik yuz berdi. Iltimos, birozdan so'ng qayta urinib ko'ring."
+        )
+    finally:
+        await state.clear()
+
+
