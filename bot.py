@@ -147,3 +147,16 @@ async def get_oqituvchi(message: Message, state: FSMContext):
     )
 
 
+@dp.callback_query(F.data.startswith("reja:"), Order.reja_soni)
+async def get_reja_soni(callback: CallbackQuery, state: FSMContext):
+    reja_soni = int(callback.data.split(":")[1])
+    await state.update_data(reja_soni=reja_soni)
+    await state.set_state(Order.varoq_soni)
+    await callback.message.edit_text(f"Reja bo'limlari soni: {reja_soni} ✅")
+    await callback.message.answer(
+        "Hujjat necha varoqdan iborat bo'lsin?",
+        reply_markup=varoq_soni_kb(),
+    )
+    await callback.answer()
+
+
