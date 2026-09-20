@@ -127,3 +127,13 @@ async def get_universitet(message: Message, state: FSMContext):
     )
 
 
+@dp.message(Order.guruh)
+async def get_guruh(message: Message, state: FSMContext):
+    await state.update_data(guruh=message.text.strip())
+    await state.set_state(Order.oqituvchi)
+    await message.answer(
+        "O'qituvchi familiya ismini kiriting:\nMisol: Sobirov Doniyor",
+        reply_markup=bekor_kb(),
+    )
+
+
