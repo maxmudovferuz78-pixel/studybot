@@ -6,11 +6,19 @@ load_dotenv()  # .env faylidan o'zgaruvchilarni yuklaydi (lokal ishlashda qulay)
 # Telegram bot tokeni (@BotFather dan olinadi)
 BOT_TOKEN = os.getenv("BOT_TOKEN", "SIZNING_BOT_TOKENINGIZ")
 
-# OpenAI API kaliti (platform.openai.com dan olinadi)
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "SIZNING_OPENAI_KEYINGIZ")
+# ---------------- AI provayderlar ----------------
+# Har biri ixtiyoriy — kaliti bo'lmagan provayder avtomatik o'tkazib yuboriladi.
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
-# Ishlatiladigan model — arzon va sifatli variant
 OPENAI_MODEL = "gpt-4o-mini"
+GEMINI_MODEL = "gemini-1.5-flash"
+ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
+
+# Sinov tartibi: birinchisi ishlamasa (xato/limit/balans tugasa),
+# avtomatik ravishda keyingisiga o'tiladi. Xohlagan tartibda qo'yishingiz mumkin.
+AI_PROVIDER_ORDER = ["openai", "gemini", "claude"]
 
 # Hozircha barcha foydalanuvchilar uchun bepul (limitsiz).
 # Keyinchalik shu yerga kunlik/oylik limit yoki balans tizimi qo'shiladi.
