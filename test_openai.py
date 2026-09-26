@@ -17,3 +17,17 @@ async def main():
     print("Sinov so'rovi yuborilmoqda...")
 
     client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    try:
+        response = await client.chat.completions.create(
+            model=OPENAI_MODEL,
+            messages=[{"role": "user", "content": "Salom, 1+1 nechi?"}],
+            max_tokens=20,
+        )
+        print("✅ Muvaffaqiyatli! Javob:", response.choices[0].message.content)
+    except Exception as e:
+        print("❌ XATOLIK TOPILDI:")
+        print(type(e).__name__, "-", str(e))
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
