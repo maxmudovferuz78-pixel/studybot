@@ -113,5 +113,44 @@ async def generate_reja(mavzu: str, reja_soni: int) -> list[str]:
     return lines[:reja_soni]
 
 
+async def generate_section(mavzu: str, bolim_nomi: str, chars_target: int, is_kirish: bool = False, is_xulosa: bool = False) -> str:
+    """
+    Bitta bo'lim (yoki Kirish/Xulosa) uchun matn generatsiya qiladi.
+    """
+    if is_kirish:
+        vazifa = f"'{mavzu}' mavzusidagi mustaqil ish uchun Kirish qismini yozing."
+    elif is_xulosa:
+        vazifa = f"'{mavzu}' mavzusidagi mustaqil ish uchun Xulosa qismini yozing."
+    else:
+        vazifa = f"'{mavzu}' mavzusi doirasida '{bolim_nomi}' bo'limi uchun batafsil matn yozing."
 
+    prompt = (
+        f"{vazifa}\n\n"
+        f"Talablar:\n"
+        f"- Rasmiy, akademik uslubda, o'zbek tilida yozing.\n"
+        f"- Taxminan {chars_target} belgi (bir necha paragraf) hajmida bo'lsin.\n"
+        f"- Sarlavha yozmang, faqat matnning o'zini bering.\n"
+        f"- Paragraflarni mantiqiy tarzda ajrating.\n"
+    )
+    return await ask_ai(prompt, max_tokens=2000)
+
+
+async def generate_full_document(mavzu: str, reja_soni: int, chars_per_section: int) -> dict:
+    """
+    Butun hujjatni generatsiya qiladi: reja, kirish, har bir bo'lim, xulosa.
+    Bo'limlarni parallel generatsiya qilib vaqtni tejaydi.
+    """
+    reja = await generate_reja(mavzu, reja_soni)
+
+    tasks = [generate_section(mavzu, "", chars_per_section, is_kirish=True)]
+    for bolim in reja:
+        tasks.append(generate_section(mavzu, bolim, chars_per_section))
+    tasks.append(generate_section(mavzu, "", chars_per_section, is_xulosa=True))
+
+    results = await asyncio.gather(*tasks)
+
+    return {
+        "kirish": results[0],
+        "bolimlar": list(zip(reja, results[1:-1])),
+        "xulosa": results[-1],
     }
