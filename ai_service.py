@@ -81,3 +81,33 @@ _PROVIDER_FUNCS = {
 _RETRIES_PER_PROVIDER = 2  # vaqtinchalik xatolar (503, tarmoq) uchun qayta urinishlar soni
 _RETRY_DELAY_SECONDS = 2
 
+
+async def ask_ai(prompt: str, max_tokens: int = 2000) -> str:
+    """
+    AI_PROVIDER_ORDER tartibida provayderlarni sinab ko'radi.
+    Har bir provayder uchun bir necha marta qayta uriniladi (vaqtinchalik
+    xatolar — masalan "503 high demand" — uchun), shundan keyin keyingi
+    provayderga o'tiladi. Hammasi ishlamasa — istisno chiqaradi.
+    """
+    last_error = None
+    for provider_name in AI_PROVIDER_ORDER:
+        func = _PROVIDER_FUNCS.get(provider_name)
+        if not func:
+            continue
+
+        for attempt in range(1, _RETRIES_PER_PROVIDER + 1):
+            try:
+                return await func(prompt, max_tokens)
+            except Exception as e:
+                last_error = e
+                if attempt < _RETRIES_PER_PROVIDER:
+                    logger.warning(
+                        f"{provider_name} xatolik ({attempt}/{_RETRIES_PER_PROVIDER}): {e}. "
+                        f"{_RETRY_DELAY_SECONDS}s dan keyin qayta urinilmoqda..."
+                    )
+                    await asyncio.sleep(_RETRY_DELAY_SECONDS)
+                else:
+                    logger.warning(f"{provider_name} ishlamadi: {e}. Keyingi provayderga o'tilmoqda...")
+
+    raise RuntimeError(f"Barcha AI provayderlar ishlamadi. Oxirgi xato: {last_error}")
+
