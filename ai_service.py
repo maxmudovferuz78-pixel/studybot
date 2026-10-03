@@ -111,3 +111,20 @@ async def ask_ai(prompt: str, max_tokens: int = 2000) -> str:
 
     raise RuntimeError(f"Barcha AI provayderlar ishlamadi. Oxirgi xato: {last_error}")
 
+
+async def generate_reja(mavzu: str, reja_soni: int) -> list[str]:
+    """
+    Mavzu bo'yicha reja (bo'limlar ro'yxati) generatsiya qiladi.
+    """
+    prompt = (
+        f"'{mavzu}' mavzusidagi mustaqil ish/referat uchun {reja_soni} ta "
+        f"asosiy bo'limdan iborat reja tuzing. Kirish va Xulosa alohida "
+        f"hisoblanmaydi, faqat asosiy {reja_soni} ta bo'lim nomini bering. "
+        f"Har bir bo'lim nomini yangi qatordan, raqamlashtirib yozing. "
+        f"Boshqa hech qanday izoh yozmang, faqat ro'yxat."
+    )
+    text = await ask_ai(prompt, max_tokens=500)
+    lines = [line.strip() for line in text.split("\n") if line.strip()]
+    return lines[:reja_soni]
+
+
